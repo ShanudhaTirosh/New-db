@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Students Database - Enhanced</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <style>
+    /* Enhanced Custom Styles */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      --danger-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+      --card-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      --card-hover-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    }
+    
+    body {
+      min-height: 100vh;
+      background: var(--primary-gradient);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .main-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      margin: 20px auto;
+      padding: 40px;
+      max-width: 1400px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .navbar {
+      background: var(--primary-gradient) !important;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+      padding: 15px 0;
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .spinner-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(5px);
+    }
+    
+    .spinner-container.show {
+      display: flex;
+    }
+    
+    .spinner-custom {
+      width: 80px;
+      height: 80px;
+      border: 8px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .field-editor-item {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      background: linear-gradient(145deg, #ffffff, #f8f9fa);
+      transition: all 0.3s ease;
+    }
+    
+    .field-editor-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+      transform: translateX(5px);
+    }
+    
+    .student-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .student-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--card-hover-shadow);
+    }
+    
+    .student-card .card-header {
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: bold;
+      padding: 15px;
+    }
+    
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9998;
+    }
+    
+    .unauthorized {
+      text-align: center;
+      padding: 80px 20px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    .search-sort-container {
+      background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card.primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    
+    .stat-card.success {
+      background: var(--success-gradient);
+      color: white;
+    }
+    
+    .stat-card.danger {
+      background: var(--danger-gradient);
+      color: white;
+    }
+    
+    .stat-icon {
+      font-size: 3rem;
+      opacity: 0.8;
+    }
+    
+    .btn-gradient-primary {
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-gradient-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      color: white;
+    }
+    
+    .btn-gradient-success {
+      background: var(--success-gradient);
+      border: none;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-gradient-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+      color: white;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .badge-custom {
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    
+    .modal-content {
+      border-radius: 20px;
+      border: none;
+    }
+    
+    .modal-header {
+      background: var(--primary-gradient);
+      color: white;
+      border-radius: 20px 20px 0 0;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      color: #667eea;
+      font-weight: 600;
+      padding: 12px 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
+    
+    .nav-tabs .nav-link.active {
+      background: var(--primary-gradient);
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .empty-state i {
+      font-size: 5rem;
+      opacity: 0.3;
+      margin-bottom: 20px;
+    }
+    
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #f0f0f0;
+    }
+    
+    .pagination-custom {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .filter-badge {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 15px;
+      background: #667eea;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-badge:hover {
+      background: #764ba2;
+      transform: scale(1.05);
+    }
+    
+    .activity-log-item {
+      border-left: 3px solid #667eea;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f8f9fa;
+      border-radius: 0 10px 10px 0;
+      transition: all 0.3s ease;
+    }
+    
+    .activity-log-item:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+    }
+    
+    .progress-custom {
+      height: 25px;
+      border-radius: 15px;
+      background: #e9ecef;
+    }
+    
+    .progress-bar-custom {
+      background: var(--primary-gradient);
+      border-radius: 15px;
+      transition: width 0.6s ease;
+    }
+    
+    /* Table Styles */
+    .table-responsive {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .table {
+      margin-bottom: 0;
+      background: white;
+    }
+    
+    .table thead th {
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 15px 10px;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+      background-color: #f8f9fa;
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .table td {
+      padding: 12px 10px;
+      vertical-align: middle;
+      border-color: #e9ecef;
+    }
+    
+    .table .btn-group-sm .btn {
+      padding: 5px 10px;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Spinner -->
+  <div class="spinner-container" id="loadingSpinner">
+    <div class="spinner-custom"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#" onclick="showNormalView(); return false;">
+        <i class="bi bi-mortarboard-fill me-2"></i>Students Database Pro
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="showAddStudentForm(); return false;">
+              <i class="bi bi-plus-circle"></i> Add Student
+            </a>
+          </li>
+          <li class="nav-item" id="mySubmissionsNav" style="display: none;">
+            <a class="nav-link" href="#" onclick="showMySubmissions(); return false;">
+              <i class="bi bi-file-earmark-text"></i> My Submissions
+            </a>
+          </li>
+          <li class="nav-item" id="adminDashboardNav" style="display: none;">
+            <a class="nav-link" href="#" onclick="showAdminDashboard(); return false;">
+              <i class="bi bi-speedometer2"></i> Admin Dashboard
+            </a>
+          </li>
+          <li class="nav-item" id="analyticsNav" style="display: none;">
+            <a class="nav-link" href="#" onclick="showAnalytics(); return false;">
+              <i class="bi bi-graph-up"></i> Analytics
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item" id="loginNav">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#authModal">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+          </li>
+          <li class="nav-item" id="userNav" style="display: none;">
+            <span class="navbar-text text-white me-3">
+              <i class="bi bi-person-circle"></i> <span id="userEmail"></span>
+            </span>
+          </li>
+          <li class="nav-item" id="logoutNav" style="display: none;">
+            <a class="nav-link" href="#" onclick="handleLogout(); return false;">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <div class="container">
+    <div class="main-container">
+      <!-- Normal User View (Add Student Form) -->
+      <div id="normalView">
+        <div class="page-header">
+          <div>
+            <h2><i class="bi bi-person-plus-fill"></i> Add New Student</h2>
+            <p class="text-muted mb-0">Fill in the form below to register a new student</p>
+          </div>
+          <div>
+            <span class="badge badge-custom bg-info">
+              <i class="bi bi-clock-history"></i> <span id="formLoadTime"></span>
+            </span>
+          </div>
+        </div>
+        <form id="addStudentForm">
+          <div id="dynamicFormFields"></div>
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <button type="reset" class="btn btn-outline-secondary btn-lg">
+              <i class="bi bi-x-circle"></i> Clear Form
+            </button>
+            <button type="submit" class="btn btn-gradient-primary btn-lg">
+              <i class="bi bi-save"></i> Submit Student
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- My Submissions View -->
+      <div id="mySubmissionsView" style="display: none;">
+        <div class="page-header">
+          <div>
+            <h2><i class="bi bi-file-earmark-text"></i> My Submissions</h2>
+            <p class="text-muted mb-0">View and manage your submitted student records</p>
+          </div>
+          <div>
+            <span class="badge badge-custom bg-primary">
+              Total: <span id="mySubmissionsCount">0</span>
+            </span>
+          </div>
+        </div>
+        <div id="mySubmissionsList"></div>
+      </div>
+
+      <!-- Admin Dashboard -->
+      <div id="adminView" style="display: none;">
+        <div class="page-header">
+          <div>
+            <h2><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+            <p class="text-muted mb-0">Manage students, fields, and view statistics</p>
+          </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4" id="statsCards">
+          <div class="col-md-3">
+            <div class="stat-card primary">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 class="mb-0" id="totalStudents">0</h3>
+                  <p class="mb-0">Total Students</p>
+                </div>
+                <i class="bi bi-people stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card success">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 class="mb-0" id="todayStudents">0</h3>
+                  <p class="mb-0">Today's Entries</p>
+                </div>
+                <i class="bi bi-calendar-check stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card danger">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 class="mb-0" id="totalFields">0</h3>
+                  <p class="mb-0">Form Fields</p>
+                </div>
+                <i class="bi bi-input-cursor-text stat-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 class="mb-0" id="activeUsers">0</h3>
+                  <p class="mb-0">Contributors</p>
+                </div>
+                <i class="bi bi-person-check stat-icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tabs for Admin Functions -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#studentsPanel" type="button">
+              <i class="bi bi-people"></i> Students
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="schema-tab" data-bs-toggle="tab" data-bs-target="#schemaPanel" type="button">
+              <i class="bi bi-gear"></i> Form Schema
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activityPanel" type="button">
+              <i class="bi bi-clock-history"></i> Activity Log
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+          <!-- Students Management Panel -->
+          <div class="tab-pane fade show active" id="studentsPanel">
+            <!-- Search and Sort Controls -->
+            <div class="search-sort-container">
+              <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="searchStudents" placeholder="Search by name, class, or any field...">
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <select class="form-select" id="sortField">
+                    <option value="createdAt">Sort by Date</option>
+                    <option value="name">Sort by Name</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select class="form-select" id="filterField">
+                    <option value="">All Records</option>
+                  </select>
+                </div>
+                <div class="col-md-1">
+                  <button class="btn btn-outline-secondary w-100" onclick="toggleViewMode()" id="viewModeBtn" title="Toggle View">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <div class="btn-group w-100">
+                    <button class="btn btn-gradient-success" onclick="exportStudentsCSV()">
+                      <i class="bi bi-download"></i> CSV
+                    </button>
+                    <button class="btn btn-gradient-primary" onclick="exportStudentsJSON()">
+                      <i class="bi bi-filetype-json"></i> JSON
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Students List -->
+            <div id="studentsList" class="row"></div>
+            
+            <!-- Pagination -->
+            <div class="pagination-custom" id="paginationContainer"></div>
+          </div>
+
+          <!-- Schema Editor Panel -->
+          <div class="tab-pane fade" id="schemaPanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h4>Form Fields Configuration</h4>
+                <p class="text-muted mb-0">Create and manage form fields for student registration</p>
+              </div>
+              <button class="btn btn-gradient-primary" onclick="showAddFieldModal()">
+                <i class="bi bi-plus-circle"></i> Add Field
+              </button>
+            </div>
+            <div id="fieldsList"></div>
+          </div>
+
+          <!-- Activity Log Panel -->
+          <div class="tab-pane fade" id="activityPanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h4>Recent Activity</h4>
+                <p class="text-muted mb-0">Track all database operations and changes</p>
+              </div>
+              <button class="btn btn-outline-secondary" onclick="loadActivityLog()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+              </button>
+            </div>
+            <div id="activityLog"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics View -->
+      <div id="analyticsView" style="display: none;">
+        <div class="page-header">
+          <div>
+            <h2><i class="bi bi-graph-up"></i> Analytics & Reports</h2>
+            <p class="text-muted mb-0">Visualize student data and trends</p>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="card">
+              <div class="card-header bg-white">
+                <h5><i class="bi bi-bar-chart"></i> Submissions Over Time</h5>
+              </div>
+              <div class="card-body">
+                <canvas id="submissionsChart" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 mb-4">
+            <div class="card">
+              <div class="card-header bg-white">
+                <h5><i class="bi bi-pie-chart"></i> Top Contributors</h5>
+              </div>
+              <div class="card-body">
+                <div id="topContributors"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unauthorized View -->
+      <div id="unauthorizedView" style="display: none;">
+        <div class="unauthorized">
+          <i class="bi bi-shield-lock" style="font-size: 80px; color: #dc3545;"></i>
+          <h2 class="mt-4">403 - Unauthorized</h2>
+          <p class="text-muted">You don't have permission to access this area.</p>
+          <button class="btn btn-gradient-primary" onclick="showNormalView()">
+            <i class="bi bi-arrow-left"></i> Go Back
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-key"></i> Sign In / Sign Up</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="authForm">
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control" id="authEmail" required placeholder="your@email.com">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" class="form-control" id="authPassword" required placeholder="••••••••">
+              </div>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" name="signin" class="btn btn-gradient-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+              </button>
+              <button type="submit" name="signup" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-person-plus"></i> Create New Account
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Student Modal -->
+  <div class="modal fade" id="editStudentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Student</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="editStudentForm">
+            <input type="hidden" id="editStudentId">
+            <div id="editFormFields"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-gradient-primary" onclick="saveStudentEdit()">
+            <i class="bi bi-save"></i> Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Field Modal -->
+  <div class="modal fade" id="fieldModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fieldModalTitle">Add Field</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="fieldForm">
+            <input type="hidden" id="fieldId">
+            <div class="mb-3">
+              <label class="form-label">Field Label</label>
+              <input type="text" class="form-control" id="fieldLabel" required placeholder="e.g., Student Name">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Field Type</label>
+              <select class="form-select" id="fieldType" onchange="toggleOptionsField()">
+                <option value="text">Text</option>
+                <option value="email">Email</option>
+                <option value="tel">Phone Number</option>
+                <option value="number">Number</option>
+                <option value="date">Date</option>
+                <option value="select">Dropdown Select</option>
+                <option value="textarea">Text Area</option>
+              </select>
+            </div>
+            <div class="mb-3" id="optionsContainer" style="display: none;">
+              <label class="form-label">Options (comma-separated)</label>
+              <input type="text" class="form-control" id="fieldOptions" placeholder="Option1, Option2, Option3">
+              <small class="text-muted">For dropdown fields only</small>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="fieldRequired">
+              <label class="form-check-label" for="fieldRequired">Required Field</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-gradient-primary" onclick="saveField()">
+            <i class="bi bi-save"></i> Save Field
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Student Details Modal -->
+  <div class="modal fade" id="viewStudentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-person-vcard"></i> Student Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="studentDetailsContent"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Firebase SDK (Modular v9+) -->
+  <script type="module">
+    // FIREBASE CONFIGURATION - REPLACE WITH YOUR CONFIG
+    const firebaseConfig = {
+  apiKey: "AIzaSyAPp4TF9L8GKmXmehQYX1w8DrTWV3rWHE0",
+  authDomain: "newschool-9655a.firebaseapp.com",
+  databaseURL: "https://newschool-9655a-default-rtdb.firebaseio.com",
+  projectId: "newschool-9655a",
+  storageBucket: "newschool-9655a.firebasestorage.app",
+  messagingSenderId: "380472309123",
+  appId: "1:380472309123:web:75bdf942f574b66260f2b6",
+  measurementId: "G-4KZGSZ8SEB"
+};
+
+    // Import Firebase modules
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { 
+      getFirestore, 
+      collection, 
+      doc,
+      addDoc, 
+      getDocs, 
+      getDoc,
+      updateDoc,
+      deleteDoc,
+      query,
+      where,
+      orderBy,
+      limit,
+      onSnapshot,
+      serverTimestamp,
+      Timestamp
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Global state
+    let currentUser = null;
+    let isAdmin = false;
+    let fieldsSchema = [];
+    let allStudents = [];
+    let filteredStudents = [];
+    let fieldsUnsubscribe = null;
+    let studentsUnsubscribe = null;
+    let currentPage = 1;
+    const studentsPerPage = 15;
+    let viewMode = 'table'; // 'table' or 'cards'
+
+    /*
+     * ============================================================================
+     * UTILITY FUNCTIONS
+     * ============================================================================
+     */
+
+    function showSpinner() {
+      document.getElementById('loadingSpinner').classList.add('show');
+    }
+
+    function hideSpinner() {
+      document.getElementById('loadingSpinner').classList.remove('show');
+    }
+
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toastContainer');
+      const toastId = 'toast_' + Date.now();
+      const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+      
+      const toastHTML = `
+        <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" id="${toastId}">
+          <div class="d-flex">
+            <div class="toast-body">
+              <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+              ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        </div>
+      `;
+      
+      toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+      const toastElement = document.getElementById(toastId);
+      const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+      toast.show();
+      
+      toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+      });
+    }
+
+    function generateFieldId(label) {
+      // Convert to lowercase and replace non-alphanumeric with underscore
+      let id = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      
+      // Remove leading and trailing underscores
+      id = id.replace(/^_+|_+$/g, '');
+      
+      // Replace multiple consecutive underscores with single underscore
+      id = id.replace(/_+/g, '_');
+      
+      // If result is empty or invalid, generate a random ID
+      if (!id || id.length === 0) {
+        id = 'field_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+      
+      // Ensure it doesn't start or end with underscore (Firestore restriction)
+      if (id.startsWith('_')) id = 'f' + id;
+      if (id.endsWith('_')) id = id + 'f';
+      
+      return id;
+    }
+
+    function formatDate(timestamp) {
+      if (!timestamp) return 'N/A';
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+
+    /*
+     * ============================================================================
+     * AUTHENTICATION FUNCTIONS
+     * ============================================================================
+     */
+
+    async function checkAdminStatus(user) {
+      if (!user) return false;
+      
+      try {
+        const adminDoc = await getDoc(doc(db, 'meta', 'admins'));
+        if (adminDoc.exists()) {
+          const adminEmails = adminDoc.data().emails || [];
+          return adminEmails.includes(user.email);
+        }
+        return false;
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
+    }
+
+    async function updateAuthUI(user) {
+      const loginNav = document.getElementById('loginNav');
+      const logoutNav = document.getElementById('logoutNav');
+      const userNav = document.getElementById('userNav');
+      const userEmail = document.getElementById('userEmail');
+      const mySubmissionsNav = document.getElementById('mySubmissionsNav');
+      const adminDashboardNav = document.getElementById('adminDashboardNav');
+      const analyticsNav = document.getElementById('analyticsNav');
+
+      if (user) {
+        currentUser = user;
+        isAdmin = await checkAdminStatus(user);
+        
+        loginNav.style.display = 'none';
+        logoutNav.style.display = 'block';
+        userNav.style.display = 'block';
+        mySubmissionsNav.style.display = 'block';
+        userEmail.textContent = user.email;
+        
+        if (isAdmin) {
+          adminDashboardNav.style.display = 'block';
+          analyticsNav.style.display = 'block';
+        } else {
+          adminDashboardNav.style.display = 'none';
+          analyticsNav.style.display = 'none';
+        }
+        
+        showToast(`Welcome back, ${user.email}!`, 'info');
+      } else {
+        currentUser = null;
+        isAdmin = false;
+        loginNav.style.display = 'block';
+        logoutNav.style.display = 'none';
+        userNav.style.display = 'none';
+        mySubmissionsNav.style.display = 'none';
+        adminDashboardNav.style.display = 'none';
+        analyticsNav.style.display = 'none';
+      }
+    }
+
+    window.handleLogout = async function() {
+      try {
+        await signOut(auth);
+        showToast('Logged out successfully');
+        showNormalView();
+      } catch (error) {
+        console.error('Logout error:', error);
+        showToast('Logout failed: ' + error.message, 'error');
+      }
+    };
+
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const isSignUp = e.submitter.name === 'signup';
+      
+      showSpinner();
+      try {
+        if (isSignUp) {
+          await createUserWithEmailAndPassword(auth, email, password);
+          showToast('Account created successfully! 🎉');
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+          showToast('Signed in successfully! 👋');
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+        document.getElementById('authForm').reset();
+      } catch (error) {
+        console.error('Auth error:', error);
+        showToast(error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    });
+
+    /*
+     * ============================================================================
+     * SCHEMA MANAGEMENT
+     * ============================================================================
+     */
+
+    function loadFieldsSchema() {
+      if (fieldsUnsubscribe) {
+        fieldsUnsubscribe();
+      }
+      
+      fieldsUnsubscribe = onSnapshot(collection(db, 'fields'), (snapshot) => {
+        fieldsSchema = [];
+        snapshot.forEach((doc) => {
+          fieldsSchema.push({ id: doc.id, ...doc.data() });
+        });
+        
+        fieldsSchema.sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        document.getElementById('totalFields').textContent = fieldsSchema.length;
+        
+        renderAddStudentForm();
+        if (isAdmin) {
+          renderFieldsList();
+          updateFilterOptions();
+        }
+      }, (error) => {
+        console.error('Error loading fields schema:', error);
+        showToast('Error loading form fields', 'error');
+      });
+    }
+
+    function renderFieldsList() {
+      const container = document.getElementById('fieldsList');
+      if (!container) return;
+      
+      if (fieldsSchema.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h4>No Fields Configured</h4>
+            <p>Add your first field to get started with the student registration form.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = fieldsSchema.map((field, index) => `
+        <div class="field-editor-item">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-secondary me-2">#${index + 1}</span>
+                <h5 class="mb-0">${field.label}</h5>
+              </div>
+              <p class="mb-2">
+                <span class="badge badge-custom bg-primary">${field.type}</span>
+                ${field.required ? '<span class="badge badge-custom bg-warning text-dark">Required</span>' : '<span class="badge badge-custom bg-secondary">Optional</span>'}
+              </p>
+              ${field.options ? `<p class="mb-0 small text-muted"><i class="bi bi-list-ul"></i> Options: ${field.options.join(', ')}</p>` : ''}
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-primary" onclick="editField('${field.id}')" title="Edit Field">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteField('${field.id}')" title="Delete Field">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.showAddFieldModal = function() {
+      document.getElementById('fieldModalTitle').textContent = 'Add New Field';
+      document.getElementById('fieldForm').reset();
+      document.getElementById('fieldId').value = '';
+      document.getElementById('optionsContainer').style.display = 'none';
+      new bootstrap.Modal(document.getElementById('fieldModal')).show();
+    };
+
+    window.editField = function(fieldId) {
+      const field = fieldsSchema.find(f => f.id === fieldId);
+      if (!field) return;
+      
+      document.getElementById('fieldModalTitle').textContent = 'Edit Field';
+      document.getElementById('fieldId').value = field.id;
+      document.getElementById('fieldLabel').value = field.label;
+      document.getElementById('fieldType').value = field.type;
+      document.getElementById('fieldRequired').checked = field.required;
+      
+      if (field.options) {
+        document.getElementById('fieldOptions').value = field.options.join(', ');
+        document.getElementById('optionsContainer').style.display = 'block';
+      } else {
+        document.getElementById('optionsContainer').style.display = 'none';
+      }
+      
+      new bootstrap.Modal(document.getElementById('fieldModal')).show();
+    };
+
+    window.toggleOptionsField = function() {
+      const type = document.getElementById('fieldType').value;
+      const container = document.getElementById('optionsContainer');
+      container.style.display = type === 'select' ? 'block' : 'none';
+    };
+
+    window.saveField = async function() {
+      const fieldId = document.getElementById('fieldId').value;
+      const label = document.getElementById('fieldLabel').value.trim();
+      const type = document.getElementById('fieldType').value;
+      const required = document.getElementById('fieldRequired').checked;
+      const optionsStr = document.getElementById('fieldOptions').value.trim();
+      
+      if (!label) {
+        showToast('Field label is required', 'error');
+        return;
+      }
+      
+      // Validate that label has at least one alphanumeric character
+      if (!/[a-zA-Z0-9]/.test(label)) {
+        showToast('Field label must contain at least one letter or number', 'error');
+        return;
+      }
+      
+      const generatedId = generateFieldId(label);
+      
+      // Check if generated ID is valid
+      if (!generatedId || generatedId.startsWith('__') || generatedId.endsWith('__')) {
+        showToast('Invalid field label. Please use a label with letters or numbers.', 'error');
+        return;
+      }
+      
+      const fieldData = {
+        label,
+        type,
+        required,
+        order: fieldsSchema.length,
+        fieldId: generatedId,
+        updatedAt: serverTimestamp()
+      };
+      
+      if (type === 'select' && optionsStr) {
+        fieldData.options = optionsStr.split(',').map(o => o.trim()).filter(o => o);
+        if (fieldData.options.length === 0) {
+          showToast('Please provide at least one option for dropdown field', 'error');
+          return;
+        }
+      } else if (type === 'select' && !optionsStr) {
+        showToast('Dropdown field requires options', 'error');
+        return;
+      }
+      
+      showSpinner();
+      try {
+        if (fieldId) {
+          await updateDoc(doc(db, 'fields', fieldId), fieldData);
+          showToast('Field updated successfully! ✅');
+          await logActivity('updated', 'field', label);
+        } else {
+          await addDoc(collection(db, 'fields'), {
+            ...fieldData,
+            createdAt: serverTimestamp()
+          });
+          showToast('Field added successfully! ✅');
+          await logActivity('created', 'field', label);
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('fieldModal')).hide();
+      } catch (error) {
+        console.error('Error saving field:', error);
+        showToast('Error saving field: ' + error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    };
+
+    window.deleteField = async function(fieldId) {
+      const field = fieldsSchema.find(f => f.id === fieldId);
+      if (!confirm(`Are you sure you want to delete the field "${field.label}"? This will not delete data from existing records.`)) {
+        return;
+      }
+      
+      showSpinner();
+      try {
+        await deleteDoc(doc(db, 'fields', fieldId));
+        showToast('Field deleted successfully! 🗑️');
+        await logActivity('deleted', 'field', field.label);
+      } catch (error) {
+        console.error('Error deleting field:', error);
+        showToast('Error deleting field: ' + error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    };
+
+    /*
+     * ============================================================================
+     * STUDENT FORM RENDERING
+     * ============================================================================
+     */
+
+    function renderAddStudentForm() {
+      const container = document.getElementById('dynamicFormFields');
+      if (!container) return;
+      
+      // Update form load time
+      const formLoadTime = document.getElementById('formLoadTime');
+      if (formLoadTime) {
+        formLoadTime.textContent = new Date().toLocaleTimeString();
+      }
+      
+      if (fieldsSchema.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h4>Form Not Configured</h4>
+            <p>The admin needs to set up form fields before students can be added.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = fieldsSchema.map(field => {
+        let inputHTML = '';
+        const fieldId = field.fieldId || generateFieldId(field.label);
+        
+        switch (field.type) {
+          case 'textarea':
+            inputHTML = `<textarea class="form-control" id="${fieldId}" rows="4" ${field.required ? 'required' : ''} placeholder="Enter ${field.label.toLowerCase()}..."></textarea>`;
+            break;
+          case 'select':
+            const options = field.options || [];
+            inputHTML = `
+              <select class="form-select" id="${fieldId}" ${field.required ? 'required' : ''}>
+                <option value="">Select an option...</option>
+                ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+              </select>
+            `;
+            break;
+          case 'email':
+            inputHTML = `<input type="email" class="form-control" id="${fieldId}" ${field.required ? 'required' : ''} placeholder="email@example.com">`;
+            break;
+          case 'tel':
+            inputHTML = `<input type="tel" class="form-control" id="${fieldId}" ${field.required ? 'required' : ''} placeholder="+1234567890">`;
+            break;
+          default:
+            inputHTML = `<input type="${field.type}" class="form-control" id="${fieldId}" ${field.required ? 'required' : ''} placeholder="Enter ${field.label.toLowerCase()}...">`;
+        }
+        
+        return `
+          <div class="mb-4">
+            <label class="form-label fw-bold">
+              <i class="bi bi-${field.type === 'email' ? 'envelope' : field.type === 'tel' ? 'telephone' : field.type === 'date' ? 'calendar' : 'input-cursor-text'}"></i>
+              ${field.label}
+              ${field.required ? '<span class="text-danger">*</span>' : '<span class="text-muted small">(Optional)</span>'}
+            </label>
+            ${inputHTML}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const data = {};
+      fieldsSchema.forEach(field => {
+        const fieldId = field.fieldId || generateFieldId(field.label);
+        const element = document.getElementById(fieldId);
+        if (element) {
+          data[fieldId] = element.value;
+        }
+      });
+      
+      const studentData = {
+        data,
+        createdAt: serverTimestamp(),
+        ownerUid: currentUser ? currentUser.uid : null,
+        ownerEmail: currentUser ? currentUser.email : 'anonymous'
+      };
+      
+      showSpinner();
+      try {
+        await addDoc(collection(db, 'students'), studentData);
+        showToast('Student added successfully! 🎉');
+        document.getElementById('addStudentForm').reset();
+        
+        // Log activity
+        const nameField = fieldsSchema.find(f => f.label.toLowerCase().includes('name'));
+        const studentName = nameField ? data[nameField.fieldId || generateFieldId(nameField.label)] : 'Student';
+        await logActivity('created', 'student', studentName);
+      } catch (error) {
+        console.error('Error adding student:', error);
+        showToast('Error adding student: ' + error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    });
+
+    /*
+     * ============================================================================
+     * STUDENTS MANAGEMENT
+     * ============================================================================
+     */
+
+    function loadAllStudents() {
+      if (!isAdmin) return;
+      
+      if (studentsUnsubscribe) {
+        studentsUnsubscribe();
+      }
+      
+      const q = query(collection(db, 'students'), orderBy('createdAt', 'desc'));
+      studentsUnsubscribe = onSnapshot(q, (snapshot) => {
+        allStudents = [];
+        snapshot.forEach((doc) => {
+          allStudents.push({ id: doc.id, ...doc.data() });
+        });
+        
+        filteredStudents = [...allStudents];
+        updateStatistics();
+        renderStudentsList();
+      }, (error) => {
+        console.error('Error loading students:', error);
+        showToast('Error loading students', 'error');
+      });
+    }
+
+    function updateStatistics() {
+      document.getElementById('totalStudents').textContent = allStudents.length;
+      
+      // Count today's entries
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayCount = allStudents.filter(s => {
+        if (!s.createdAt) return false;
+        const studentDate = s.createdAt.toDate();
+        studentDate.setHours(0, 0, 0, 0);
+        return studentDate.getTime() === today.getTime();
+      }).length;
+      document.getElementById('todayStudents').textContent = todayCount;
+      
+      // Count unique contributors
+      const uniqueUsers = new Set(allStudents.map(s => s.ownerEmail).filter(e => e && e !== 'anonymous'));
+      document.getElementById('activeUsers').textContent = uniqueUsers.size;
+    }
+
+    function renderStudentsList() {
+      const container = document.getElementById('studentsList');
+      if (!container) return;
+      
+      if (filteredStudents.length === 0) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <h4>No Students Found</h4>
+              <p>Try adjusting your search or filter criteria.</p>
+            </div>
+          </div>
+        `;
+        document.getElementById('paginationContainer').innerHTML = '';
+        return;
+      }
+      
+      // Pagination
+      const perPage = viewMode === 'table' ? 15 : 9;
+      const totalPages = Math.ceil(filteredStudents.length / perPage);
+      const startIndex = (currentPage - 1) * perPage;
+      const endIndex = startIndex + perPage;
+      const paginatedStudents = filteredStudents.slice(startIndex, endIndex);
+      
+      if (viewMode === 'table') {
+        renderTableView(paginatedStudents, startIndex);
+      } else {
+        renderCardView(paginatedStudents);
+      }
+      
+      renderPagination(totalPages);
+    }
+    
+    function renderTableView(paginatedStudents, startIndex) {
+      const container = document.getElementById('studentsList');
+      
+      // Get first 10 fields for table headers
+      const visibleFields = fieldsSchema.slice(0, 10);
+      const hasMoreFields = fieldsSchema.length > 10;
+      
+      // Build table
+      let tableHTML = `
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+              <thead class="table-primary">
+                <tr>
+                  <th style="width: 50px;" class="text-center">
+                    <i class="bi bi-eye"></i>
+                  </th>
+                  <th style="width: 60px;">
+                    <i class="bi bi-hash"></i>
+                  </th>
+      `;
+      
+      // Add field headers
+      visibleFields.forEach(field => {
+        tableHTML += `<th><i class="bi bi-tag"></i> ${field.label}</th>`;
+      });
+      
+      if (hasMoreFields) {
+        tableHTML += `<th class="text-center" style="width: 70px;"><i class="bi bi-three-dots"></i></th>`;
+      }
+      
+      tableHTML += `
+                  <th style="width: 110px;">
+                    <i class="bi bi-calendar"></i> Date
+                  </th>
+                  <th style="width: 180px;" class="text-center">
+                    <i class="bi bi-gear"></i> Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      // Add table rows
+      paginatedStudents.forEach((student, index) => {
+        const createdAt = student.createdAt ? new Date(student.createdAt.toDate()).toLocaleDateString() : 'N/A';
+        const data = student.data || {};
+        const rowNumber = startIndex + index + 1;
+        
+        tableHTML += `
+          <tr>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info text-white" onclick="viewStudentDetails('${student.id}')" title="View All Details">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+            </td>
+            <td class="text-muted small fw-bold">${rowNumber}</td>
+        `;
+        
+        // Add visible field data
+        visibleFields.forEach(field => {
+          const fieldId = field.fieldId || generateFieldId(field.label);
+          const value = data[fieldId] || '-';
+          const truncatedValue = value.length > 40 ? value.substring(0, 37) + '...' : value;
+          tableHTML += `<td>${truncatedValue}</td>`;
+        });
+        
+        if (hasMoreFields) {
+          const remainingCount = fieldsSchema.length - 10;
+          tableHTML += `
+            <td class="text-center">
+              <span class="badge bg-secondary" title="${remainingCount} more fields">+${remainingCount}</span>
+            </td>
+          `;
+        }
+        
+        tableHTML += `
+            <td class="small">${createdAt}</td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-outline-primary" onclick="editStudent('${student.id}')" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-info" onclick="viewStudentDetails('${student.id}')" title="View">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-outline-danger" onclick="deleteStudent('${student.id}')" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      
+      tableHTML += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      
+      container.innerHTML = tableHTML;
+    }
+    
+    function renderCardView(paginatedStudents) {
+      const container = document.getElementById('studentsList');
+      
+      container.innerHTML = paginatedStudents.map(student => {
+        const createdAt = student.createdAt ? new Date(student.createdAt.toDate()).toLocaleDateString() : 'N/A';
+        const data = student.data || {};
+        
+        const displayFields = fieldsSchema.slice(0, 3).map(field => {
+          const fieldId = field.fieldId || generateFieldId(field.label);
+          const value = data[fieldId] || 'N/A';
+          return `<p class="mb-2"><strong><i class="bi bi-tag"></i> ${field.label}:</strong> ${value}</p>`;
+        }).join('');
+        
+        return `
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card student-card h-100" onclick="viewStudentDetails('${student.id}')">
+              <div class="card-header">
+                <i class="bi bi-person-circle"></i> Student Record
+              </div>
+              <div class="card-body">
+                ${displayFields}
+                <hr>
+                <small class="text-muted">
+                  <i class="bi bi-calendar"></i> ${createdAt}<br>
+                  <i class="bi bi-person"></i> ${student.ownerEmail || 'Unknown'}
+                </small>
+              </div>
+              <div class="card-footer bg-transparent">
+                <div class="btn-group w-100">
+                  <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); editStudent('${student.id}')">
+                    <i class="bi bi-pencil"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-info text-white" onclick="event.stopPropagation(); viewStudentDetails('${student.id}')">
+                    <i class="bi bi-eye"></i> View
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteStudent('${student.id}')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderPagination(totalPages) {
+      const container = document.getElementById('paginationContainer');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      let paginationHTML = '<ul class="pagination">';
+      
+      // Previous button
+      paginationHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+      `;
+      
+      // Page numbers
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          paginationHTML += `
+            <li class="page-item ${currentPage === i ? 'active' : ''}">
+              <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+            </li>
+          `;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+        }
+      }
+      
+      // Next button
+      paginationHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      `;
+      
+      paginationHTML += '</ul>';
+      container.innerHTML = paginationHTML;
+    }
+
+    window.changePage = function(page) {
+      currentPage = page;
+      renderStudentsList();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    window.toggleViewMode = function() {
+      viewMode = viewMode === 'table' ? 'cards' : 'table';
+      const btn = document.getElementById('viewModeBtn');
+      if (btn) {
+        btn.innerHTML = viewMode === 'table' ? '<i class="bi bi-grid-3x3-gap"></i>' : '<i class="bi bi-table"></i>';
+        btn.title = viewMode === 'table' ? 'Switch to Card View' : 'Switch to Table View';
+      }
+      currentPage = 1;
+      renderStudentsList();
+    };
+
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchStudents');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.toLowerCase();
+          currentPage = 1;
+          
+          if (searchTerm === '') {
+            filteredStudents = [...allStudents];
+          } else {
+            filteredStudents = allStudents.filter(student => {
+              const data = student.data || {};
+              return Object.values(data).some(value => 
+                String(value).toLowerCase().includes(searchTerm)
+              ) || (student.ownerEmail && student.ownerEmail.toLowerCase().includes(searchTerm));
+            });
+          }
+          
+          renderStudentsList();
+        });
+      }
+      
+      const sortField = document.getElementById('sortField');
+      if (sortField) {
+        sortField.addEventListener('change', (e) => {
+          const field = e.target.value;
+          currentPage = 1;
+          
+          filteredStudents.sort((a, b) => {
+            if (field === 'createdAt') {
+              const aTime = a.createdAt ? a.createdAt.toDate() : new Date(0);
+              const bTime = b.createdAt ? b.createdAt.toDate() : new Date(0);
+              return bTime - aTime;
+            } else if (field === 'name') {
+              const nameField = fieldsSchema.find(f => 
+                f.label.toLowerCase().includes('name')
+              );
+              if (nameField) {
+                const fieldId = nameField.fieldId || generateFieldId(nameField.label);
+                const aName = (a.data && a.data[fieldId]) || '';
+                const bName = (b.data && b.data[fieldId]) || '';
+                return aName.localeCompare(bName);
+              }
+            }
+            return 0;
+          });
+          
+          renderStudentsList();
+        });
+      }
+    });
+
+    function updateFilterOptions() {
+      const filterField = document.getElementById('filterField');
+      if (!filterField) return;
+      
+      let optionsHTML = '<option value="">All Records</option>';
+      fieldsSchema.forEach(field => {
+        if (field.type === 'select') {
+          optionsHTML += `<option value="${field.id}">${field.label}</option>`;
+        }
+      });
+      filterField.innerHTML = optionsHTML;
+    }
+
+    window.viewStudentDetails = function(studentId) {
+      const student = allStudents.find(s => s.id === studentId);
+      if (!student) return;
+      
+      const data = student.data || {};
+      const createdAt = student.createdAt ? formatDate(student.createdAt) : 'N/A';
+      
+      let detailsHTML = `
+        <div class="alert alert-info mb-4">
+          <div class="row">
+            <div class="col-md-4">
+              <strong><i class="bi bi-hash"></i> Record ID:</strong><br>
+              <small class="font-monospace">${student.id}</small>
+            </div>
+            <div class="col-md-4">
+              <strong><i class="bi bi-calendar"></i> Created:</strong><br>
+              ${createdAt}
+            </div>
+            <div class="col-md-4">
+              <strong><i class="bi bi-person"></i> Submitted by:</strong><br>
+              ${student.ownerEmail || 'Unknown'}
+            </div>
+          </div>
+          ${student.lastEditedAt ? `
+          <div class="row mt-2 pt-2 border-top">
+            <div class="col-12">
+              <strong><i class="bi bi-pencil"></i> Last edited:</strong>
+              ${formatDate(student.lastEditedAt)} by ${student.lastEditedBy || 'Unknown'}
+            </div>
+          </div>
+          ` : ''}
+        </div>
+        
+        <h5 class="mb-3"><i class="bi bi-file-earmark-text"></i> Student Information</h5>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 35%;">Field</th>
+                <th style="width: 65%;">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      fieldsSchema.forEach((field, index) => {
+        const fieldId = field.fieldId || generateFieldId(field.label);
+        const value = data[fieldId] || '<span class="text-muted">Not provided</span>';
+        const icon = field.type === 'email' ? 'envelope' : 
+                     field.type === 'tel' ? 'telephone' : 
+                     field.type === 'date' ? 'calendar' : 
+                     field.type === 'number' ? 'calculator' : 
+                     field.type === 'select' ? 'list-ul' : 
+                     field.type === 'textarea' ? 'text-paragraph' : 'input-cursor-text';
+        
+        detailsHTML += `
+          <tr>
+            <td class="fw-bold">
+              <i class="bi bi-${icon} text-primary"></i> ${field.label}
+              ${field.required ? '<span class="badge bg-warning text-dark ms-1">Required</span>' : ''}
+            </td>
+            <td>${value}</td>
+          </tr>
+        `;
+      });
+      
+      detailsHTML += `
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      document.getElementById('studentDetailsContent').innerHTML = detailsHTML;
+      new bootstrap.Modal(document.getElementById('viewStudentModal')).show();
+    };
+
+    window.editStudent = function(studentId) {
+      const student = allStudents.find(s => s.id === studentId);
+      if (!student) return;
+      
+      document.getElementById('editStudentId').value = studentId;
+      
+      const container = document.getElementById('editFormFields');
+      const data = student.data || {};
+      
+      container.innerHTML = fieldsSchema.map(field => {
+        const fieldId = field.fieldId || generateFieldId(field.label);
+        const value = data[fieldId] || '';
+        let inputHTML = '';
+        
+        switch (field.type) {
+          case 'textarea':
+            inputHTML = `<textarea class="form-control" id="edit_${fieldId}" rows="4" ${field.required ? 'required' : ''}>${value}</textarea>`;
+            break;
+          case 'select':
+            const options = field.options || [];
+            inputHTML = `
+              <select class="form-select" id="edit_${fieldId}" ${field.required ? 'required' : ''}>
+                <option value="">Select...</option>
+                ${options.map(opt => `<option value="${opt}" ${opt === value ? 'selected' : ''}>${opt}</option>`).join('')}
+              </select>
+            `;
+            break;
+          default:
+            inputHTML = `<input type="${field.type}" class="form-control" id="edit_${fieldId}" value="${value}" ${field.required ? 'required' : ''}>`;
+        }
+        
+        return `
+          <div class="mb-3">
+            <label class="form-label fw-bold">
+              ${field.label}
+              ${field.required ? '<span class="text-danger">*</span>' : ''}
+            </label>
+            ${inputHTML}
+          </div>
+        `;
+      }).join('');
+      
+      new bootstrap.Modal(document.getElementById('editStudentModal')).show();
+    };
+
+    window.saveStudentEdit = async function() {
+      const studentId = document.getElementById('editStudentId').value;
+      if (!studentId) return;
+      
+      const data = {};
+      fieldsSchema.forEach(field => {
+        const fieldId = field.fieldId || generateFieldId(field.label);
+        const element = document.getElementById('edit_' + fieldId);
+        if (element) {
+          data[fieldId] = element.value;
+        }
+      });
+      
+      showSpinner();
+      try {
+        await updateDoc(doc(db, 'students', studentId), {
+          data,
+          lastEditedAt: serverTimestamp(),
+          lastEditedBy: currentUser ? currentUser.email : 'unknown'
+        });
+        
+        showToast('Student updated successfully! ✅');
+        bootstrap.Modal.getInstance(document.getElementById('editStudentModal')).hide();
+        
+        const nameField = fieldsSchema.find(f => f.label.toLowerCase().includes('name'));
+        const studentName = nameField ? data[nameField.fieldId || generateFieldId(nameField.label)] : 'Student';
+        await logActivity('updated', 'student', studentName);
+      } catch (error) {
+        console.error('Error updating student:', error);
+        showToast('Error updating student: ' + error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    };
+
+    window.deleteStudent = async function(studentId) {
+      const student = allStudents.find(s => s.id === studentId);
+      if (!confirm('Are you sure you want to delete this student record? This action cannot be undone.')) {
+        return;
+      }
+      
+      showSpinner();
+      try {
+        await deleteDoc(doc(db, 'students', studentId));
+        showToast('Student deleted successfully! 🗑️');
+        
+        const data = student.data || {};
+        const nameField = fieldsSchema.find(f => f.label.toLowerCase().includes('name'));
+        const studentName = nameField ? data[nameField.fieldId || generateFieldId(nameField.label)] : 'Student';
+        await logActivity('deleted', 'student', studentName);
+      } catch (error) {
+        console.error('Error deleting student:', error);
+        showToast('Error deleting student: ' + error.message, 'error');
+      } finally {
+        hideSpinner();
+      }
+    };
+
+    window.exportStudentsCSV = function() {
+      if (allStudents.length === 0) {
+        showToast('No students to export', 'error');
+        return;
+      }
+      
+      const headers = ['ID', 'Created Date', 'Owner Email'];
+      fieldsSchema.forEach(field => {
+        headers.push(field.label);
+      });
+      
+      const rows = allStudents.map(student => {
+        const row = [];
+        row.push(student.id);
+        const createdAt = student.createdAt ? new Date(student.createdAt.toDate()).toLocaleString() : 'N/A';
+        row.push(createdAt);
+        row.push(student.ownerEmail || 'N/A');
+        
+        const data = student.data || {};
+        fieldsSchema.forEach(field => {
+          const fieldId = field.fieldId || generateFieldId(field.label);
+          row.push(data[fieldId] || '');
+        });
+        
+        return row;
+      });
+      
+      const csvContent = [
+        headers.map(h => `"${h}"`).join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `students_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('CSV exported successfully! 📥');
+      logActivity('exported', 'csv', `${allStudents.length} students`);
+    };
+
+    window.exportStudentsJSON = function() {
+      if (allStudents.length === 0) {
+        showToast('No students to export', 'error');
+        return;
+      }
+      
+      const exportData = {
+        exportDate: new Date().toISOString(),
+        totalStudents: allStudents.length,
+        fields: fieldsSchema.map(f => ({ label: f.label, type: f.type })),
+        students: allStudents.map(student => ({
+          id: student.id,
+          createdAt: student.createdAt ? student.createdAt.toDate().toISOString() : null,
+          ownerEmail: student.ownerEmail,
+          data: student.data
+        }))
+      };
+      
+      const jsonContent = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `students_${new Date().toISOString().split('T')[0]}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('JSON exported successfully! 📥');
+      logActivity('exported', 'json', `${allStudents.length} students`);
+    };
+
+    /*
+     * ============================================================================
+     * MY SUBMISSIONS
+     * ============================================================================
+     */
+
+    async function loadMySubmissions() {
+      if (!currentUser) {
+        document.getElementById('mySubmissionsList').innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-lock"></i>
+            <h4>Login Required</h4>
+            <p>Please log in to view your submissions.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      showSpinner();
+      try {
+        const q = query(
+          collection(db, 'students'),
+          where('ownerUid', '==', currentUser.uid),
+          orderBy('createdAt', 'desc')
+        );
+        
+        const snapshot = await getDocs(q);
+        const submissions = [];
+        snapshot.forEach(doc => {
+          submissions.push({ id: doc.id, ...doc.data() });
+        });
+        
+        document.getElementById('mySubmissionsCount').textContent = submissions.length;
+        
+        const container = document.getElementById('mySubmissionsList');
+        
+        if (submissions.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <h4>No Submissions Yet</h4>
+              <p>You haven't submitted any students yet. Click "Add Student" to create your first entry.</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = submissions.map(student => {
+            const createdAt = student.createdAt ? new Date(student.createdAt.toDate()).toLocaleDateString() : 'N/A';
+            const data = student.data || {};
+            
+            const displayFields = fieldsSchema.map(field => {
+              const fieldId = field.fieldId || generateFieldId(field.label);
+              return `<p class="mb-2"><strong><i class="bi bi-tag"></i> ${field.label}:</strong> ${data[fieldId] || 'N/A'}</p>`;
+            }).join('');
+            
+            return `
+              <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                  <i class="bi bi-file-earmark-text"></i> Submission #${student.id.substring(0, 8)}
+                </div>
+                <div class="card-body">
+                  ${displayFields}
+                  <hr>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar"></i> Submitted on ${createdAt}
+                    ${student.lastEditedAt ? `<br><i class="bi bi-pencil"></i> Last edited: ${formatDate(student.lastEditedAt)}` : ''}
+                  </small>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (error) {
+        console.error('Error loading submissions:', error);
+        showToast('Error loading your submissions', 'error');
+      } finally {
+        hideSpinner();
+      }
+    }
+
+    /*
+     * ============================================================================
+     * ACTIVITY LOG
+     * ============================================================================
+     */
+
+    async function logActivity(action, type, target) {
+      if (!currentUser) return;
+      
+      try {
+        await addDoc(collection(db, 'activity'), {
+          action,
+          type,
+          target,
+          userEmail: currentUser.email,
+          timestamp: serverTimestamp()
+        });
+      } catch (error) {
+        console.error('Error logging activity:', error);
+      }
+    }
+
+    window.loadActivityLog = async function() {
+      if (!isAdmin) return;
+      
+      showSpinner();
+      try {
+        const q = query(
+          collection(db, 'activity'),
+          orderBy('timestamp', 'desc'),
+          limit(50)
+        );
+        
+        const snapshot = await getDocs(q);
+        const activities = [];
+        snapshot.forEach(doc => {
+          activities.push({ id: doc.id, ...doc.data() });
+        });
+        
+        const container = document.getElementById('activityLog');
+        
+        if (activities.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="bi bi-clock-history"></i>
+              <h4>No Activity Yet</h4>
+              <p>Activity will be logged here as users interact with the system.</p>
+            </div>
+          `;
+        } else {
+          container.innerHTML = activities.map(activity => {
+            const timestamp = activity.timestamp ? formatDate(activity.timestamp) : 'N/A';
+            const iconMap = {
+              created: 'plus-circle text-success',
+              updated: 'pencil text-primary',
+              deleted: 'trash text-danger',
+              exported: 'download text-info'
+            };
+            const icon = iconMap[activity.action] || 'circle';
+            
+            return `
+              <div class="activity-log-item">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">
+                      <i class="bi bi-${icon}"></i>
+                      ${activity.action.charAt(0).toUpperCase() + activity.action.slice(1)} ${activity.type}
+                    </h6>
+                    <p class="mb-1">${activity.target}</p>
+                    <small class="text-muted">
+                      <i class="bi bi-person"></i> ${activity.userEmail} • 
+                      <i class="bi bi-clock"></i> ${timestamp}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (error) {
+        console.error('Error loading activity log:', error);
+        showToast('Error loading activity log', 'error');
+      } finally {
+        hideSpinner();
+      }
+    };
+
+    /*
+     * ============================================================================
+     * ANALYTICS
+     * ============================================================================
+     */
+
+    window.showAnalytics = function() {
+      if (!isAdmin) {
+        showUnauthorized();
+        return;
+      }
+      
+      document.getElementById('normalView').style.display = 'none';
+      document.getElementById('mySubmissionsView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'none';
+      document.getElementById('analyticsView').style.display = 'block';
+      document.getElementById('unauthorizedView').style.display = 'none';
+      
+      generateAnalytics();
+    };
+
+    function generateAnalytics() {
+      // Generate submissions over time chart
+      const last7Days = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        last7Days.push(date);
+      }
+      
+      const submissionsByDay = last7Days.map(date => {
+        return allStudents.filter(s => {
+          if (!s.createdAt) return false;
+          const studentDate = s.createdAt.toDate();
+          studentDate.setHours(0, 0, 0, 0);
+          return studentDate.getTime() === date.getTime();
+        }).length;
+      });
+      
+      // Simple text-based chart
+      const chartContainer = document.getElementById('submissionsChart');
+      if (chartContainer) {
+        let chartHTML = '<div class="row">';
+        last7Days.forEach((date, index) => {
+          const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+          const count = submissionsByDay[index];
+          const maxCount = Math.max(...submissionsByDay, 1);
+          const percentage = (count / maxCount) * 100;
+          
+          chartHTML += `
+            <div class="col text-center">
+              <div style="height: 150px; display: flex; align-items: flex-end; justify-content: center;">
+                <div style="width: 40px; height: ${percentage}%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; position: relative;">
+                  <span style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #667eea;">${count}</span>
+                </div>
+              </div>
+              <small class="text-muted">${dayName}</small>
+            </div>
+          `;
+        });
+        chartHTML += '</div>';
+        chartContainer.parentElement.innerHTML = chartHTML;
+      }
+      
+      // Top contributors
+      const contributorCounts = {};
+      allStudents.forEach(s => {
+        const email = s.ownerEmail || 'anonymous';
+        contributorCounts[email] = (contributorCounts[email] || 0) + 1;
+      });
+      
+      const topContributors = Object.entries(contributorCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      
+      const contributorsContainer = document.getElementById('topContributors');
+      if (contributorsContainer) {
+        if (topContributors.length === 0) {
+          contributorsContainer.innerHTML = '<p class="text-muted">No data available yet.</p>';
+        } else {
+          contributorsContainer.innerHTML = topContributors.map(([email, count], index) => {
+            const totalSubmissions = allStudents.length;
+            const percentage = ((count / totalSubmissions) * 100).toFixed(1);
+            const medals = ['🥇', '🥈', '🥉'];
+            const medal = medals[index] || '🏅';
+            
+            return `
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span>${medal} <strong>${email}</strong></span>
+                  <span class="badge bg-primary">${count} submissions</span>
+                </div>
+                <div class="progress progress-custom">
+                  <div class="progress-bar progress-bar-custom" style="width: ${percentage}%">
+                    ${percentage}%
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    /*
+     * ============================================================================
+     * VIEW MANAGEMENT
+     * ============================================================================
+     */
+
+    window.showNormalView = function() {
+      document.getElementById('normalView').style.display = 'block';
+      document.getElementById('mySubmissionsView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'none';
+      document.getElementById('analyticsView').style.display = 'none';
+      document.getElementById('unauthorizedView').style.display = 'none';
+    };
+
+    window.showAddStudentForm = function() {
+      showNormalView();
+    };
+
+    window.showMySubmissions = function() {
+      document.getElementById('normalView').style.display = 'none';
+      document.getElementById('mySubmissionsView').style.display = 'block';
+      document.getElementById('adminView').style.display = 'none';
+      document.getElementById('analyticsView').style.display = 'none';
+      document.getElementById('unauthorizedView').style.display = 'none';
+      
+      loadMySubmissions();
+    };
+
+    window.showAdminDashboard = function() {
+      if (!isAdmin) {
+        showUnauthorized();
+        return;
+      }
+      
+      document.getElementById('normalView').style.display = 'none';
+      document.getElementById('mySubmissionsView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'block';
+      document.getElementById('analyticsView').style.display = 'none';
+      document.getElementById('unauthorizedView').style.display = 'none';
+      
+      loadAllStudents();
+      renderFieldsList();
+    };
+
+    function showUnauthorized() {
+      document.getElementById('normalView').style.display = 'none';
+      document.getElementById('mySubmissionsView').style.display = 'none';
+      document.getElementById('adminView').style.display = 'none';
+      document.getElementById('analyticsView').style.display = 'none';
+      document.getElementById('unauthorizedView').style.display = 'block';
+    }
+
+    /*
+     * ============================================================================
+     * INITIALIZATION
+     * ============================================================================
+     */
+
+    onAuthStateChanged(auth, async (user) => {
+      await updateAuthUI(user);
+      
+      if (isAdmin && document.getElementById('adminView').style.display === 'block') {
+        loadAllStudents();
+      }
+    });
+
+    console.log('App initialized...');
+    loadFieldsSchema();
+    showNormalView();
+
+  </script>
+</body>
+</html>
+
+<!--
+==============================================================================
+FIRESTORE SECURITY RULES
+==============================================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/meta/admins).data.emails.hasAny([request.auth.token.email]);
+    }
+    
+    match /students/{studentId} {
+      allow create: if true;
+      allow read: if isAdmin() || (request.auth != null && resource.data.ownerUid == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+    
+    match /fields/{fieldId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    match /activity/{activityId} {
+      allow create: if request.auth != null;
+      allow read: if isAdmin();
+    }
+    
+    match /meta/{document} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
+
+==============================================================================
+SETUP INSTRUCTIONS
+==============================================================================
+
+1. REPLACE FIREBASE CONFIG
+   - Find the firebaseConfig object in the code
+   - Replace with your Firebase project configuration
+
+2. ENABLE AUTHENTICATION
+   - Firebase Console > Authentication > Sign-in method
+   - Enable Email/Password
+
+3. DEPLOY SECURITY RULES
+   - Copy rules above to Firestore Database > Rules
+   - Click "Publish"
+
+4. CREATE ADMIN USER
+   - Sign up through the app
+   - Firestore Database > Create collection "meta"
+   - Document ID: "admins"
+   - Field: "emails" (array) with your admin email
+
+5. ADD FORM FIELDS (Admin)
+   - Login with admin account
+   - Admin Dashboard > Form Schema tab
+   - Add fields like: Student Name, Class, Date of Birth, etc.
+
+FEATURES INCLUDED:
+✅ Enhanced UI with gradients and animations
+✅ Real-time database updates
+✅ Advanced search and filtering
+✅ Pagination for large datasets
+✅ CSV and JSON export
+✅ Activity logging system
+✅ Analytics dashboard with charts
+✅ Detailed student view modal
+✅ My Submissions view for users
+✅ Statistics cards on admin dashboard
+✅ Improved form validation
+✅ Better error handling and user feedback
+✅ Responsive design for all devices
+✅ Professional toast notifications
+
+-->
